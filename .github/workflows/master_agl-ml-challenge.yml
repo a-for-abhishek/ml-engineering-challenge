@@ -45,7 +45,7 @@ jobs:
       id: deploy-to-webapp
       uses: azure/webapps-deploy@v2
       with:
-        app-name: 'agl-ml-challenge'
+        app-name: 'agl-challenge'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_8e94cbc844e9451e9e05dffbf6cf8912 }}
         images: 'aglacr.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_63375adfecf74efc8d94346b40f1ecc6 }}/eglmlchallenge:${{ github.sha }}'
