@@ -6,7 +6,8 @@ COPY ./requirements.txt /app/requirements.txt
 
 RUN pip install --no-cache-dir -r /app/requirements.txt
 
-COPY ./main.py slr.pkl /app/
+COPY ./main.py slr.pkl auth.py /app/
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
+EXPOSE 8000
 
+CMD ["python", "main.py"]
