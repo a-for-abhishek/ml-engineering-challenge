@@ -27,7 +27,7 @@ users = [{'username': 'abi', 'password': '$2b$12$vfX17MZ4F1udDGiZN6GRguDC1PDe8ia
 
 @app.get("/")
 async def root():
-    return {"message": "Welcome to Linear Regression API. Hope you like it."}
+    return {"message": "Welcome to Linear Regression API. Hope you like it!"}
 
 @app.get("/get_model_details")
 async def get_model_details():
