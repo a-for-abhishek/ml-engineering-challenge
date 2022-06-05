@@ -22,15 +22,15 @@ jobs:
     - name: Log in to registry
       uses: docker/login-action@v1
       with:
-        registry: https://testazurecr1.azurecr.io/
-        username: ${{ secrets.AzureAppService_ContainerUsername_ba87daa10b9b4062b7cc57a8ad66801e }}
-        password: ${{ secrets.AzureAppService_ContainerPassword_603e3be3ffd649f58eba92090ac1ded3 }}
+        registry: https://aglacr.azurecr.io/
+        username: ${{ secrets.AzureAppService_ContainerUsername_63375adfecf74efc8d94346b40f1ecc6 }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_bdb00a40b19d45d28c43136dc1221d9d }}
 
     - name: Build and push container image to registry
       uses: docker/build-push-action@v2
       with:
         push: true
-        tags: testazurecr1.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_ba87daa10b9b4062b7cc57a8ad66801e }}/eglchallenge:${{ github.sha }}
+        tags: aglacr.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_63375adfecf74efc8d94346b40f1ecc6 }}/eglmlchallenge:${{ github.sha }}
         file: ./Dockerfile
 
   deploy:
@@ -47,5 +47,5 @@ jobs:
       with:
         app-name: 'agl-ml-challenge'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_829ff30ead3c498eaaa86fd57ad227b1 }}
-        images: 'testazurecr1.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_ba87daa10b9b4062b7cc57a8ad66801e }}/eglchallenge:${{ github.sha }}'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_8e94cbc844e9451e9e05dffbf6cf8912 }}
+        images: 'aglacr.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_63375adfecf74efc8d94346b40f1ecc6 }}/eglmlchallenge:${{ github.sha }}'
