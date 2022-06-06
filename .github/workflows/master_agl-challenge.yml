@@ -58,6 +58,7 @@ jobs:
         push: true
         tags: aglacr.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_1a56827b05ad4c6293a6cbacbbd2ff4b }}/eglmlchallenge:${{ github.sha }}
         file: ./Dockerfile
+        context: .
 
   deploy:
     runs-on: ubuntu-latest
