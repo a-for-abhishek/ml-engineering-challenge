@@ -14,7 +14,14 @@ jobs:
     runs-on: 'ubuntu-latest'
 
     steps:
+    - name: checkout github repo
     - uses: actions/checkout@v2
+      with:
+        lfs: true
+    - name: checkout lfs objects
+      run: |
+        git lfs fetch
+        git lfs pull
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
