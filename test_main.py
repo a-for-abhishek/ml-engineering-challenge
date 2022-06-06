@@ -19,5 +19,5 @@ def test_stream():
     print (token)
     response = client.post("/stream/", headers={"Authorization": "Bearer " + str(token)}, json={"input": 0.52})
     output = json.loads(response.text)
-    assert output['result'] == "640.2574412842405"
+    assert output['result'] == "640.2571140419432"
     assert response.status_code == 200
