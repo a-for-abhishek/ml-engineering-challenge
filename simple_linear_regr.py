@@ -13,6 +13,7 @@ class SimpleLinearRegression:
         self.lr = lr # The learning rate
         self.losses = [] # A list to hold the history of the calculated losses
         self.W, self.b = None, None # the slope and the intercept of the model
+        self.bins = None
 
     def __loss(self, y, y_hat):
         """
@@ -74,6 +75,8 @@ class SimpleLinearRegression:
             if not i % 100:
                 print(f"Iteration {i}, Loss: {loss}")
 
+        _, self.bins = np.histogram(y, density=False, bins=4)
+
     def predict(self, X):
         """
 
@@ -90,6 +93,7 @@ if __name__ == "__main__":
     X_train, y_train, X_test, y_test = generate_data()
     model = SimpleLinearRegression()
     model.fit(X_train,y_train)
+    hist_array, bin_array = np.histogram(y_train, density=False, bins=4)
     predicted = model.predict(X_test)
     evaluate(model, X_test, y_test, predicted)
     create_pickle(model)

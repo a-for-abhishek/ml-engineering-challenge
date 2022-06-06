@@ -7,31 +7,44 @@ import uvicorn
 import random
 import time
 
+
+# pydantic model to force a schema on the input
 class X(BaseModel):
     input: float = 0.1
 
+
+# pydantic model to force a schema on the input
 class X_arr(BaseModel):
     input: List[float] = []
 
+
+# pydantic model for user database
 class AuthDetails(BaseModel):
     username: str
     password: str
+
 
 app = FastAPI()
 
 auth_handler = AuthHandler()
 
+# loading the model
 model = dill.load(open('slr.pkl', 'rb'))
 
+# hard-coding a user for testing purposes
+# in real-world, we would obviously have an AD taking care of this
 users = [{'username': 'abi', 'password': '$2b$12$vfX17MZ4F1udDGiZN6GRguDC1PDe8iawTilayLm8g1daF9eHl0yEK'}]
+
 
 @app.get("/")
 async def root():
     return {"message": "Welcome to Linear Regression API. Hope you like it!"}
 
+
 @app.get("/get_model_details")
 async def get_model_details():
     return {"learning rate": str(model.lr), "iterations": str(model.iterations)}
+
 
 @app.get("/is-it-working")
 async def is_it_working():
@@ -40,16 +53,20 @@ async def is_it_working():
     output = model.predict(input)
     output = output.flatten()[0]
     return {"message": "Made a test call for you!", "input": str(input),
-            "output": str(output), "timetaken in ms": str((time.time() - start) * 1000)}
+            "output": str(output), "time-taken in ms": str((time.time() - start) * 1000)}
 
+
+# one of the requirements was to have /stream endpoint
 @app.post("/stream/")
 async def stream(diabetes_x: X, username=Depends(auth_handler.auth_wrapper)):
     start = time.time()
     input = float(diabetes_x.input)
     output = model.predict(input)
     output = output.flatten()[0]
-    return {"result": str(output), "timetaken in ms": str((time.time() - start) * 1000), "caller": username}
+    return {"result": str(output), "time-taken in ms": str((time.time() - start) * 1000), "caller": username}
 
+
+# one of the requirements was to have /batch endpoint
 @app.post("/batch/")
 async def batch(diabetes_x_arr: X_arr, username=Depends(auth_handler.auth_wrapper)):
     start = time.time()
@@ -58,9 +75,8 @@ async def batch(diabetes_x_arr: X_arr, username=Depends(auth_handler.auth_wrappe
         output = model.predict(float(x))
         output = output.flatten()[0]
         prediction.append(output)
-    # print (out)
-    # diabetes_X[:, np.newaxis, 2]
-    return {"result": str(prediction), "timetaken in ms": str((time.time() - start) * 1000), "caller": username}
+    return {"result": str(prediction), "time-taken in ms": str((time.time() - start) * 1000), "caller": username}
+
 
 @app.post("/stream/predict_class/")
 async def stream_class(diabetes_x: X, username=Depends(auth_handler.auth_wrapper)):
@@ -68,13 +84,21 @@ async def stream_class(diabetes_x: X, username=Depends(auth_handler.auth_wrapper
     input = float(diabetes_x.input)
     output = model.predict(input)
     output = output.flatten()[0]
-    if output > 0.5:
-        out_class = 'Class0.51-1'
+    if output < model.bins[0]:
+        out_class = 'Class0'
+    elif model.bins[0] <= output < model.bins[1]:
+        out_class = 'Class1'
+    elif model.bins[1] <= output < model.bins[2]:
+        out_class = 'Class2'
+    elif model.bins[2] <= output < model.bins[3]:
+        out_class = 'Class3'
     else:
-        out_class = 'Class0-0.5'
-    return {"result": str(output), "result_class": out_class, "timetaken in ms": str((time.time() - start) * 1000)
+        out_class = 'Class4'
+    return {"result": str(output), "result_class": out_class, "time-taken in ms": str((time.time() - start) * 1000)
         , "caller": username}
 
+
+# function not used as we usually don't have a way to create a user via ML inference endpoint
 # @app.post('/register', status_code=201)
 # def register(auth_details: AuthDetails):
 #     if any(x['username'] == auth_details.username for x in users):
@@ -87,6 +111,7 @@ async def stream_class(diabetes_x: X, username=Depends(auth_handler.auth_wrapper
 #     })
 #     return
 
+# to get the authorization token in order to call the protected endpoints
 @app.post('/token')
 def token(auth_details: AuthDetails):
     user = None
@@ -99,6 +124,7 @@ def token(auth_details: AuthDetails):
         raise HTTPException(status_code=401, detail='Invalid username and/or password')
     token, ttl = auth_handler.encode_token(user['username'])
     return {'token': token, 'expires_on': ttl}
+
 
 if __name__ == '__main__':
     uvicorn.run(app, host="0.0.0.0", port=8000)
