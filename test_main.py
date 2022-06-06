@@ -10,7 +10,7 @@ auth_handler = AuthHandler()
 def test_read_main():
     response = client.get("/")
     assert response.status_code == 200
-    assert response.json() == {"message": "Welcome to Linear Regression API"}
+    assert response.json() == {"message": "Welcome to Linear Regression API. Hope you like it!"}
 
 
 def test_stream():
