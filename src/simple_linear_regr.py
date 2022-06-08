@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 from simple_linear_regr_utils import generate_data, evaluate
 import pickle
