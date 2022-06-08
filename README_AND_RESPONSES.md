@@ -1,5 +1,16 @@
 # EGL ML CHALLENGE
 
+### Public Endpoint and other details - 
+
+Home page - https://agl-challenge.azurewebsites.net/
+
+The schema is available here - https://agl-challenge.azurewebsites.net/docs
+
+Currently, only 1 user exists in the database which is hardcoded.
+
+username - abi
+password - password
+
 ### Below is a high-level architectural design of the system I have built.
 
 ![Architecture Design](Arch Design.jpeg)
